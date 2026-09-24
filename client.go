@@ -21,6 +21,13 @@ var (
 )
 
 const (
+	// DefaultAPIBaseURL is the base URL of the production LAPro API.
+	DefaultAPIBaseURL = "https://api.leadadvantagepro.com"
+	// DefaultAuthBaseURL is the base URL of the production LAPro authorization server.
+	DefaultAuthBaseURL = "https://authorize.leadadvantagepro.com"
+)
+
+const (
 	GenderMale   = "M"
 	GenderFemale = "F"
 )
@@ -227,6 +234,8 @@ type requestAccessTokenWithRefreshResponse struct {
 }
 
 type Client struct {
+	apiBaseURL   string
+	authBaseURL  string
 	username     string
 	password     string
 	clientID     string
@@ -241,8 +250,12 @@ type Client struct {
 	accessTokenExpiry time.Time
 }
 
-func NewClient(username, password, clientID, clientSecret string, httpClient *http.Client) *Client {
+// NewClient returns a new LAPro client. Use DefaultAPIBaseURL and DefaultAuthBaseURL
+// to target the production LAPro environment.
+func NewClient(apiBaseURL, authBaseURL, username, password, clientID, clientSecret string, httpClient *http.Client) *Client {
 	return &Client{
+		apiBaseURL:   strings.TrimSuffix(apiBaseURL, "/"),
+		authBaseURL:  strings.TrimSuffix(authBaseURL, "/"),
 		username:     username,
 		password:     password,
 		clientID:     clientID,
@@ -262,7 +275,7 @@ func (c *Client) Ping(ctx context.Context) error {
 // The response includes one entry per state that intersects with the zip code, with each
 // state entry containing its respective counties that fall within the zip code boundaries.
 func (c *Client) ListCountiesByZipCode(ctx context.Context, zipCode string) ([]*ListCountiesByZipCodeResponse, error) {
-	url := "https://api.leadadvantagepro.com/api/geo/countiesByZip/" + zipCode
+	url := c.apiBaseURL + "/api/geo/countiesByZip/" + zipCode
 	const method = "GET"
 
 	accessToken, err := c.getAccessToken(ctx)
@@ -316,7 +329,7 @@ func (c *Client) ListCountiesByZipCode(ctx context.Context, zipCode string) ([]*
 // GetDrugNames returns a list of drug names that match the provided partial drug name. A partial
 // drug name typically consist of the first 3 letters of the drug name.
 func (c *Client) GetDrugNames(ctx context.Context, searchTerm string) ([]*GetDrugNamesResponse, error) {
-	const url = "https://api.leadadvantagepro.com/api/drug/getDrugNames"
+	url := c.apiBaseURL + "/api/drug/getDrugNames"
 	const method = "POST"
 
 	accessToken, err := c.getAccessToken(ctx)
@@ -373,7 +386,7 @@ func (c *Client) GetDrugNames(ctx context.Context, searchTerm string) ([]*GetDru
 
 // ListDrugDosagesByDrugName returns a list of Drugs & dosages for a given drug name.
 func (c *Client) ListDrugDosagesByDrugName(ctx context.Context, drugName string) ([]*Drug, error) {
-	const url = "https://api.leadadvantagepro.com/api/drug/searchByDrugName"
+	url := c.apiBaseURL + "/api/drug/searchByDrugName"
 	const method = "POST"
 
 	accessToken, err := c.getAccessToken(ctx)
@@ -431,7 +444,7 @@ func (c *Client) ListDrugDosagesByDrugName(ctx context.Context, drugName string)
 // ListPharmaciesByZipCode returns a list of pharmacies for a given zipcode, within a given radius from the
 // geographical center of the zipcode.
 func (c *Client) ListPharmaciesByZipCode(ctx context.Context, zipCode, radius string) ([]*Pharmacy, error) {
-	const url = "https://api.leadadvantagepro.com/api/pharmacy/searchByZip"
+	url := c.apiBaseURL + "/api/pharmacy/searchByZip"
 	const method = "POST"
 
 	accessToken, err := c.getAccessToken(ctx)
@@ -497,7 +510,7 @@ func (c *Client) ListPharmaciesByZipCode(ctx context.Context, zipCode, radius st
 }
 
 func (c *Client) RequestQuote(ctx context.Context, params RequestQuoteParams) (*RequestQuoteResponse, error) {
-	const url = "https://api.leadadvantagepro.com/api/quote/QuoteRequest"
+	url := c.apiBaseURL + "/api/quote/QuoteRequest"
 	const method = "POST"
 
 	accessToken, err := c.getAccessToken(ctx)
@@ -556,7 +569,7 @@ func (c *Client) RequestQuote(ctx context.Context, params RequestQuoteParams) (*
 }
 
 func (c *Client) GetCarrier(ctx context.Context, id int32) (*Carrier, error) {
-	url := "https://api.leadadvantagepro.com/api/carrier/" + strconv.Itoa(int(id))
+	url := c.apiBaseURL + "/api/carrier/" + strconv.Itoa(int(id))
 	const method = "GET"
 
 	accessToken, err := c.getAccessToken(ctx)
@@ -651,7 +664,7 @@ func (c *Client) getAccessToken(ctx context.Context) (string, error) {
 
 // RequestAccessToken retrieves an access token & refresh token from LAPro using the supplied credentials.
 func (c *Client) requestAccessToken(ctx context.Context) (*requestAccessTokenResponse, error) {
-	const url = "https://authorize.leadadvantagepro.com/access_token"
+	url := c.authBaseURL + "/access_token"
 	const method = "POST"
 
 	payload := &bytes.Buffer{}
@@ -695,7 +708,7 @@ func (c *Client) requestAccessToken(ctx context.Context) (*requestAccessTokenRes
 
 // RequestAccessTokenWithRefresh retrieves a new access token from LAPro using an existing refresh token.
 func (c *Client) requestAccessTokenWithRefresh(ctx context.Context, refreshToken string) (*requestAccessTokenWithRefreshResponse, error) {
-	const url = "https://authorize.leadadvantagepro.com/refresh_token"
+	url := c.authBaseURL + "/refresh_token"
 	const method = "POST"
 
 	payload := &bytes.Buffer{}

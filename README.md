@@ -15,7 +15,7 @@ A Go client library for the Lead Advantage Pro (LAPro) API, providing access to 
 ## Installation
 
 ```bash
-go get github.com/medicareschoolcom/lapro
+go get github.com/medicareschoolcom/lapro/v2
 ```
 
 ## Quick Start
@@ -28,11 +28,13 @@ import (
     "fmt"
     "net/http"
 
-    "github.com/medicareschoolcom/lapro"
+    "github.com/medicareschoolcom/lapro/v2"
 )
 
 func main() {
     client := lapro.NewClient(
+        lapro.DefaultAPIBaseURL,
+        lapro.DefaultAuthBaseURL,
         "your-username",
         "your-password",
         "your-client-id",

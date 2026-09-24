@@ -51,7 +51,7 @@ func getLAProCredentials(t *testing.T) laProCredentials {
 
 func TestClient_requestAccessTokenWithRefresh(t *testing.T) {
 	creds := getLAProCredentials(t)
-	client := NewClient(creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
+	client := NewClient(DefaultAPIBaseURL, DefaultAuthBaseURL, creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
 	ctx := context.Background()
 
 	resp, err := client.requestAccessToken(ctx)
@@ -67,7 +67,7 @@ func TestClient_requestAccessTokenWithRefresh(t *testing.T) {
 
 func TestClient_ListCountiesByZipCode(t *testing.T) {
 	creds := getLAProCredentials(t)
-	client := NewClient(creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
+	client := NewClient(DefaultAPIBaseURL, DefaultAuthBaseURL, creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
 	ctx := context.Background()
 
 	tests := []struct {
@@ -201,7 +201,7 @@ func TestClient_GetDrugNames(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			creds := getLAProCredentials(t)
-			client := NewClient(creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
+			client := NewClient(DefaultAPIBaseURL, DefaultAuthBaseURL, creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
 			ctx := context.Background()
 
 			resp, err := client.GetDrugNames(ctx, tc.drugName)
@@ -247,7 +247,7 @@ func TestClient_ListDrugDosagesByDrugName(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			creds := getLAProCredentials(t)
-			client := NewClient(creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
+			client := NewClient(DefaultAPIBaseURL, DefaultAuthBaseURL, creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
 			ctx := context.Background()
 
 			drugs, err := client.ListDrugDosagesByDrugName(ctx, tc.drugName)
@@ -286,7 +286,7 @@ func TestClient_ListPharmaciesByZipCode(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			creds := getLAProCredentials(t)
-			client := NewClient(creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
+			client := NewClient(DefaultAPIBaseURL, DefaultAuthBaseURL, creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
 			ctx := context.Background()
 
 			pharmacies, err := client.ListPharmaciesByZipCode(ctx, tc.zipCode, tc.radius)
@@ -303,7 +303,7 @@ func TestClient_ListPharmaciesByZipCode(t *testing.T) {
 
 func TestClient_RequestQuote(t *testing.T) {
 	creds := getLAProCredentials(t)
-	client := NewClient(creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
+	client := NewClient(DefaultAPIBaseURL, DefaultAuthBaseURL, creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
 	ctx := context.Background()
 
 	effectiveDate := getNextMonthFirstDay()
@@ -436,7 +436,7 @@ func TestClient_GetCarrier(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
 			creds := getLAProCredentials(t)
-			client := NewClient(creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
+			client := NewClient(DefaultAPIBaseURL, DefaultAuthBaseURL, creds.username, creds.password, creds.clientID, creds.clientSecret, &http.Client{})
 			ctx := context.Background()
 
 			carrier, err := client.GetCarrier(ctx, tc.carrierID)

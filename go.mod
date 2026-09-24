@@ -1,4 +1,4 @@
-module github.com/medicareschoolcom/lapro
+module github.com/medicareschoolcom/lapro/v2
 
 go 1.24.3
 

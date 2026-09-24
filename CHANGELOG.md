@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-24
+
+### Added
+- `DefaultAPIBaseURL` and `DefaultAuthBaseURL` constants for the production LAPro endpoints
+
+### Changed
+- **Breaking:** Module path is now `github.com/medicareschoolcom/lapro/v2`
+- **Breaking:** `NewClient()` now takes `apiBaseURL` and `authBaseURL` as its first two arguments instead of hardcoding the LAPro URLs
+
 ## [1.0.0] - 2025-09-22
 
 ### Added
